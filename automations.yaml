@@ -1,0 +1,792 @@
+- id: '1504088777670'
+  alias: "Remotes - Get Harmony Remote states on startup"
+  initial_state: 'on'
+  trigger:
+  - platform: event
+    event_type: homeassistant_start
+    event_data: {}
+  condition: []
+  action:
+  - delay: '1'
+  - service: input_select.select_option
+    data_template:
+      entity_id: input_select.livingroom_harmony_activity
+      option: '{{ states.remote.living_room.attributes.current_activity }}'
+  - service: input_select.select_option
+    data_template:
+      entity_id: input_select.office_harmony_activity
+      option: '{{ states.remote.office.attributes.current_activity }}'
+
+- id: '1504184672781'
+  alias: "Remotes - Update Home Assistant when Lounge Remote turns on or off - Lounge"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: remote.livingroom
+  condition: []
+  action:
+  - service: input_select.select_option
+    data_template:
+      entity_id: input_select.livingroom_harmony_activity
+      option: '{{ states.remote.living_room.attributes.current_activity }}'
+
+- id: '1504184672782'
+  alias: "Remotes - Update Home Assistant when Office Remote turns on or off - Office"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: remote.office
+  condition: []
+  action:
+  - service: input_select.select_option
+    data_template:
+      entity_id: input_select.office_harmony_activity
+      option: '{{ states.remote.office.attributes.current_activity }}'
+
+- id: '1504100613069'
+  alias: "Remotes - Update Home Assistant when lounge remote status changes - Lounge"
+  initial_state: 'on'
+  trigger:
+  - entity_id: sensor.livingroom_harmony_activity
+    platform: state
+  condition: []
+  action:
+  - service: input_select.select_option
+    data_template:
+      entity_id: input_select.livingroom_harmony_activity
+      option: '{{trigger.to_state.state}}'
+
+- id: '1504100613070'
+  alias: "Remotes - Update Home Assistant when office remote status changes - Office"
+  initial_state: 'on'
+  trigger:
+  - entity_id: sensor.office_harmony_activity
+    platform: state
+  condition: []
+  action:
+  - service: input_select.select_option
+    data_template:
+      entity_id: input_select.office_harmony_activity
+      option: '{{trigger.to_state.state}}'
+
+- id: '1504100746318'
+  alias: "Remotes - Start Living Room Harmony activity from input_select - Lounge"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: input_select.livingroom_harmony_activity
+  action:
+  - service: remote.turn_on
+    data_template:
+      entity_id: remote.livingroom
+      activity: '{{trigger.to_state.state}}'
+
+- id: '1504100746319'
+  alias: "Remotes - Start Office Harmony activity from input_select - Office"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: input_select.office_harmony_activity
+  action:
+  - service: remote.turn_on
+    data_template:
+      entity_id: remote.office
+      activity: '{{trigger.to_state.state}}'
+
+#- id: '1505649121203'
+#  alias: Lighting - Fix group state - Washroom
+#  trigger:
+#  - entity_id: light.washroom_ceiling
+#    platform: state
+#    to: 'off'
+#  condition: []
+#  action:
+#  - service: light.turn_off
+#    entity_id: light.washroom
+#
+#- id: '1505649121204'
+#  alias: Lighting - Fix group state - Bathroom
+#  trigger:
+#  - entity_id: light.bathroom_ceiling
+#    platform: state
+#    to: 'off'
+#  condition: []
+#  action:
+#  - service: light.turn_off
+#    entity_id: light.bathroom
+#
+#- id: '1505649121205'
+#  alias: Lighting - Fix group state - Bedroom
+#  trigger:
+#  - entity_id: light.bedroom_ceiling
+#    platform: state
+#    to: 'off'
+#  condition: []
+#  action:
+#  - service: light.turn_off
+#    entity_id: light.bedroom
+#
+#- id: '1505649121206'
+#  alias: Lighting - Fix group state - Ensuite
+#  trigger:
+#  - entity_id: light.ensuite_ceiling
+#    platform: state
+#    to: 'off'
+#  condition: []
+#  action:
+#  - service: light.turn_off
+#    entity_id: light.ensuite
+
+- id: '1505649121207'
+  alias: "Lighting - Turn on with movement - Lounge"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.lounge_multisensor_sensor
+    to: 'on'
+  condition:
+    condition: and
+    conditions:
+      - condition: template
+        value_template: >
+          {{ states('sensor.lounge_multisensor_luminance') | int < 20 }}
+      - condition: state
+        entity_id: alarm_control_panel.ha_alarm
+        state: 'disarmed'
+      - condition: state
+        entity_id: input_boolean.lounge_light_override
+        state: 'off'
+  action:
+    - service: homeassistant.turn_on
+      entity_id: light.lounge
+      data_template:  
+        brightness: >
+          {%- if is_state("sensor.time_of_day", "Evening") %}
+          255
+          {%- elif is_state("sensor.time_of_day", "Nightfall") %}
+          120
+          {%- elif is_state("sensor.time_of_day", "Night") %}
+          60
+          {%- else %}
+          255
+          {% endif %}
+        kelvin: >
+          {%- if is_state("sensor.time_of_day", "Evening") %}
+          2700
+          {%- elif is_state("sensor.time_of_day", "Nightfall") %}
+          2000
+          {%- elif is_state("sensor.time_of_day", "Night") %}
+          2000
+          {%- else %}
+          5000
+          {% endif %}
+
+- id: '1505649121207'
+  alias: "Lighting - Update for time of day - Lounge"
+  initial_state: 'on'
+  trigger: 
+    platform: state
+    entity_id: sensor.time_of_day
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: light.lounge
+        state: 'on'
+      - condition: state
+        entity_id: alarm_control_panel.ha_alarm
+        state: 'disarmed'
+      - condition: state
+        entity_id: input_boolean.lounge_light_override
+        state: 'off'
+  action:
+   - service: homeassistant.turn_on
+     entity_id: light.lounge
+     data_template:  
+       brightness: >
+         {%- if is_state("sensor.time_of_day", "Evening") %}
+         255
+         {%- elif is_state("sensor.time_of_day", "Nightfall") %}
+         120
+         {%- elif is_state("sensor.time_of_day", "Night") %}
+         60
+         {%- else %}
+         255
+         {% endif %}
+       kelvin: >
+         {%- if is_state("sensor.time_of_day", "Evening") %}
+         2700
+         {%- elif is_state("sensor.time_of_day", "Nightfall") %}
+         2000
+         {%- elif is_state("sensor.time_of_day", "Night") %}
+         2000
+         {%- else %}
+         5000
+         {% endif %}
+       transition: 180 # in seconds = 3 minutes
+
+- id: '1505649121208'
+  alias: "Lighting - Dim without movement - Lounge"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.lounge_multisensor_sensor
+    to: 'off'
+    for:
+      minutes: 30
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: remote.lounge
+        state: 'off'
+      - condition: state
+        entity_id: light.lounge
+        state: 'on'
+      - condition: state
+        entity_id: alarm_control_panel.ha_alarm
+        state: 'disarmed' 
+      - condition: state
+        entity_id: input_boolean.lounge_light_override
+        state: 'off'
+  action:
+    - service: light.turn_on
+      data: 
+        entity_id: light.lounge
+        brightness: 30
+
+- id: '15056491212081'
+  alias: "Lighting - Turn off without movement - Lounge"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.lounge_multisensor_sensor
+    to: 'off'
+    for:
+      minutes: 32
+  condition:
+    - condition: state
+      entity_id: remote.lounge
+      state: 'off'
+  action:
+    - service: light.turn_off
+      data: 
+        entity_id: light.lounge
+
+- id: '1505649121211'
+  alias: "Lighting - Turn off with sufficient light - Lounge"
+  initial_state: 'on'
+  trigger:
+    platform: template
+    value_template: >
+      {{ states('sensor.lounge_multisensor_luminance') | int > 25 }}
+  condition: []
+  action:
+    service: homeassistant.turn_off
+    entity_id: light.lounge
+
+- id: '1505649121209'
+  alias: "Lighting - Turn on with movement - Office"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.office_multisensor_sensor
+    to: 'on'
+  condition:
+    - condition: template
+      value_template: >
+        {{ states('sensor.office_multisensor_luminance') | int < 20 }}
+  action:
+    - service: homeassistant.turn_on
+      entity_id: light.office
+      data_template:  
+        brightness: >
+          {%- if is_state("sensor.time_of_day", "Evening") %}
+          255
+          {%- elif is_state("sensor.time_of_day", "Nightfall") %}
+          120
+          {%- elif is_state("sensor.time_of_day", "Night") %}
+          60
+          {%- else %}
+          255
+          {% endif %}
+        kelvin: >
+          {%- if is_state("sensor.time_of_day", "Evening") %}
+          2700
+          {%- elif is_state("sensor.time_of_day", "Nightfall") %}
+          2000
+          {%- elif is_state("sensor.time_of_day", "Night") %}
+          2000
+          {%- else %}
+          5000
+          {% endif %}
+
+- id: '15056491212091'
+  alias: "Lighting - Update for time of day - Office"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: sensor.time_of_day
+  condition:
+    - condition: state
+      entity_id: light.office
+      state: 'on'
+  action:
+    - service: homeassistant.turn_on
+      entity_id: light.office
+      data_template:  
+        brightness: >
+          {%- if is_state("sensor.time_of_day", "Evening") %}
+          255
+          {%- elif is_state("sensor.time_of_day", "Nightfall") %}
+          120
+          {%- elif is_state("sensor.time_of_day", "Night") %}
+          60
+          {%- else %}
+          255
+          {% endif %}
+        kelvin: >
+          {%- if is_state("sensor.time_of_day", "Evening") %}
+          2700
+          {%- elif is_state("sensor.time_of_day", "Nightfall") %}
+          2000
+          {%- elif is_state("sensor.time_of_day", "Night") %}
+          2000
+          {%- else %}
+          5000
+          {% endif %}
+        transition: 180 # in seconds = 3 minutes
+
+- id: '15056491212101'
+  alias: "Lighting - Dim without movement - Office"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.office_multisensor_sensor
+    to: 'off'
+    for:
+      minutes: 10
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: remote.office
+        state: 'off'
+      - condition: state
+        entity_id: light.office
+        state: 'on'
+  action:
+    - service: light.turn_on
+      data: 
+        entity_id: light.office
+        brightness: 1
+        
+- id: '1505649121210'
+  alias: "Lighting - Turn off without movement - Office"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.office_multisensor_sensor
+    to: 'off'
+    for:
+      minutes: 12
+  condition:
+    - condition: state
+      entity_id: remote.office
+      state: 'off'
+  action:
+    - service: light.turn_off
+      data: 
+        entity_id: light.office
+    
+- id: '1505649121212'
+  alias: "Lighting - Turn off with sufficient light - Office"
+  initial_state: 'on'
+  trigger:
+    platform: template
+    value_template: >
+      {{ states('sensor.office_multisensor_luminance') | int > 25 }}
+  condition: []
+  action:
+    service: homeassistant.turn_off
+    entity_id: light.lounge
+
+- id: '15056491212121'
+  alias: "Lighting - Detect lights and adjust the brightness when turned on based on time"
+  trigger:
+    - platform: event
+      event_type: state_changed
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: group.devices_phones
+        state: 'home'
+      - condition: state
+        entity_id: alarm_control_panel.alarm
+        state: disarmed
+      - condition: template
+        value_template: "{{ trigger.event.data is not none }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.entity_id is not none }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.entity_id.split('.')[0] == 'light' }}"
+#      - condition: template
+#        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.tv' }}"
+#      - condition: template
+#        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.couch' }}"
+#      - condition: template
+#        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.office' }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.new_state.state == 'on' }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.old_state.state == 'off' }}"
+  action:
+    - service: light.turn_on
+      data_template:
+        entity_id: "{{ trigger.event.data.entity_id }}"
+        brightness: >
+          {%- if is_state("sensor.time_of_day", "Evening") %}
+          255
+          {%- elif is_state("sensor.time_of_day", "Nightfall") %}
+          120
+          {%- elif is_state("sensor.time_of_day", "Night") %}
+          60
+          {%- else %}
+          255
+          {% endif %}
+        kelvin: >
+          {%- if is_state("sensor.time_of_day", "Evening") %}
+          2700
+          {%- elif is_state("sensor.time_of_day", "Nightfall") %}
+          2000
+          {%- elif is_state("sensor.time_of_day", "Night") %}
+          2000
+          {%- else %}
+          5000
+          {% endif %}
+    
+- id: '1505649121213'
+  alias: "Notify - Victoria is Home"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: device_tracker.victoria_phone
+    to: 'home'
+  condition: []
+  action:
+    service: notify.chris
+    data:
+      message: "Victoria has arrived home"
+
+- id: '1505649121214'  
+  alias: "Notify - Home Assistant Update Available"
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: updater.updater
+  action:
+    service: notify.chris
+    data:
+      message: "An update for Home Assistant is available."
+      
+- id: '1505649121215'
+  alias: "Notify - Home Assistant Started"
+  initial_state: 'on'
+  trigger:
+  - platform: homeassistant
+    event: start
+  condition: []
+  action:
+    service: notify.chris
+    data:
+      message: "Home Assistant has just started; there may have been a power cut."
+
+- id: '15056491212154'
+  alias: "Notify - New device connected"
+  trigger:
+    - platform: event
+      event_type: device_tracker_new_device
+  action:
+    service: notify.chris
+    data:
+      message: "A new device has been connected to the network."
+#    - wait_template: >-
+#        {{ not is_state('media_player.livingroom', 'playing') }}       
+#    - service: script.speech_engine
+#      data_template:
+#        NewDevice: "There has been a new device detected on the network.  Be sure to appropriately catagorize {{trigger.event.data.host_name}} within Circle."
+
+## Causing problems with ZWave on HASS.IO and the aeotec dongle.
+#- id: '15056491212151'
+#  alias: "Zwave - soft reset at 3:30am"
+#  trigger:
+#    platform: time
+#    at: '3:30:00'
+#  action:
+#    service: zwave.soft_reset
+
+- id: '15056491212152'
+  alias: "Zwave - heal at 3:35am"
+  trigger:
+    platform: time
+    at: '3:35:00'
+  action:
+    service: zwave.heal_network
+
+- id: '15056491212153'
+  alias: 'Home State - Away Mode'
+  trigger:
+    platform: state
+    entity_id: group.devices_phones
+    to: 'not_home'
+    for:
+      minutes: 10
+  action:
+    - service: alarm_control_panel.alarm_arm_away
+      entity_id: alarm_control_panel.ha_alarm
+      data:
+        code: 7543407
+    - service: notify.phone
+      data_template:
+        message: 'Everyone has left so turning off the lights and setting the alarm.'
+      data:
+        title: 'House State'
+    - service: light.turn_off
+      entity_id: group.all_lights
+
+- id: '201712311637'
+  alias: 'Disarm alarm when we arrive home'
+  trigger:
+    platform: state
+    entity_id: group.devices_phones
+    to: 'home'
+  condition: []
+  action:
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.ha_alarm
+      data:
+        code: 7543407
+
+- id: '201712311538'
+  alias: 'Trigger alarm because a door has opened (Armed Home and Armed Away)'
+  trigger:
+    - platform: state
+      entity_id:
+      - sensor.front_door
+      - sensor.backdoor_left
+      to: 'open'
+  condition:
+    - condition: state
+      entity_id: alarm_control_panel.alarm
+      state: armed_away
+    - condition: state
+      entity_id: alarm_control_panel.ha_alarm
+      state: armed_home  
+  action:
+    - service: alarm_control_panel.alarm_trigger
+      entity_id: alarm_control_panel.ha_alarm
+    - service: notify.all
+      data_template:
+        message: '{{ trigger.to_state.attributes.friendly_name }} opened'
+      data:
+        title: 'Alarm'     
+
+- id: '201712311622'
+  alias: 'Trigger alarm because a motion sensor has activated (Armed Away)'
+  trigger:
+   - platform: state
+     entity_id:
+       - binary_sensor.lounge_multisensor_sensor
+       - sensor.kitchen_motion_sensor
+       - binary_sensor.office_multisensor_sensor
+       - sensor.landing_motion_sensor
+       - sensor.landing_motion_sensor_2
+     to: 'on'
+  condition:
+    - condition: state
+      entity_id: alarm_control_panel.ha_alarm
+      state: armed_away
+  action:
+    - service: alarm_control_panel.alarm_trigger
+      entity_id: alarm_control_panel.ha_alarm
+    - service: notify.all
+      data_template:
+        message: '{{ trigger.to_state.attributes.friendly_name }} triggered'
+      data:
+        title: 'Alarm'
+
+- id: '201712311555'
+  alias: 'Set the alarm to Arm Home at night'
+  trigger:
+    platform: time
+    at: "23:00:00"
+  condition:
+    condition: state
+    entity_id: group.all_devices
+    state: home
+  action:
+    service: alarm_control_panel.alarm_arm_home
+    entity_id: alarm_control_panel.ha_alarm
+    data:
+      code: 7543407
+ 
+- id: '201712311636'
+  alias: 'Disarm the alarm in the morning when home'
+  trigger:
+    platform: time
+    at: "07:00:00"
+  condition:
+    condition: state
+    entity_id: group.all_devices
+    state: home
+  action:
+    service: alarm_control_panel.alarm_disarm
+    entity_id: alarm_control_panel.ha_alarm
+    data:
+      code: 7543407
+
+- id: '201801181845'
+  alias: 'Guest requesting access'
+  trigger:
+    platform: state
+    entity_id: sensor.guest_requesting_access
+  condition:
+    condition: template
+    value_template: >
+      {{ states('sensor.guest_requesting_access') != "" }}
+  action:
+    - service: notify.all_mobiles
+      data:
+        message: >
+          {{ states('sensor.guest_requesting_access') }} is asking to join the network
+        data:
+          push:
+            category: "guestaccess" # Needs to match the top level identifier you used in the ios configuration
+            #action_data:
+            #  mac_address: "12:34:56:78:90:AB"
+            # Anything passed in action_data will get echoed back to Home Assistant.
+            # Not working so limiting on server side to ensure only one MAC is set at a time
+
+- id: '201801181942'
+  alias: 'Approve guest access'
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: 'GRANT_ACCESS'
+  condition: []
+  action:
+    - service: script.approve_guest
+
+- id: '201801251304'
+  alias: 'Reject guest access'
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: 'REJECT_ACCESS'
+  condition: []
+  action:
+    - service: script.reject_guest
+
+
+- id: '201801101657'
+  alias: 'Alert to put recycling bin out'
+  trigger:
+    platform: time
+    minutes: '/1'
+    seconds: 0
+  condition:
+    - condition: template
+      value_template: '{{ states.sensor.date_time.state == states.sensor.recycling_bin_out.state }}'
+  action:
+    - service: persistent_notification.create
+      data:
+        message: 'The Recycling bin needs to go out for collection tomorrow.'
+        title: 'Bin Reminder'
+    - service: notify.all_home
+      data_template:
+        message: 'The Recycling bin needs to go out for collection tomorrow.'
+        data:
+          title: 'Bin Reminder'
+
+- id: '201801101746'
+  alias: 'Alert to put black bin out'
+  trigger:
+    platform: time
+    minutes: '/1'
+    seconds: 0
+  condition:
+    - condition: template
+      value_template: '{{ states.sensor.date_time.state == states.sensor.black_bin_out.state }}'
+  action:
+    - service: persistent_notification.create
+      data:
+        message: 'The Refuse bin needs to go out for collection tomorrow.'
+        title: 'Bin Reminder'
+    - service: notify.all_home
+      data_template:
+        message: 'The Refuse bin needs to go out for collection tomorrow.'
+        data:
+          title: 'Bin Reminder'
+
+- id: '201801142015'
+  alias: 'Set dark theme for the night'
+  trigger:
+    - platform: time
+      at: '19:00'
+  condition: []
+  action:
+    - service: frontend.set_theme
+      data:
+        name: darkblue
+
+- id: '201801142016'
+  alias: 'Set default theme for the day'
+  trigger:
+    - platform: time
+      at: '07:00'
+  condition: []
+  action:
+    - service: frontend.set_theme
+      data:
+        name: default
+
+
+# Automations to change Alexa volume at set time, stored for setting up at a later time.
+#############################################################
+# Change Living Room Alexa Volume @ 8AM
+#############################################################
+#- id: alexa_morning_volume_living_room
+#  alias: 'Alexa Volume [Morning]: Living Room'
+#  trigger:
+#  - platform: time
+#    at: '08:00:00'
+#  action:
+#  - service: media_player.select_source
+#    data:
+#      entity_id: media_player.spotify
+#      source: 'Living Room Alexa'
+#  - service: media_player.volume_set
+#    data:
+#      entity_id: media_player.spotify
+#      volume_level: '0.60'
+
+#############################################################
+# Change Living Room Alexa Volume @ 8PM
+#############################################################
+#- id: alexa_night_volume_living_room
+#  alias: 'Alexa Volume [Night]: Living Room'
+#  trigger:
+#  - platform: time
+#    at: '20:00:00'
+#  action:
+#  - service: media_player.select_source
+#    data:
+#      entity_id: media_player.spotify
+#      source: 'Living Room Alexa'
+#  - service: media_player.volume_set
+#    data:
+#      entity_id: media_player.spotify
+#      volume_level: '0.20'

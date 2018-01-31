@@ -1,0 +1,322 @@
+outside:
+  name: Outside
+  entities:
+    - sensor.clock_time
+    - sensor.clock_date
+    - sensor.outside_summary
+    - sensor.outside_hourly_summary
+    - sensor.outside_temp_current
+    - sensor.outside_temp_high
+    - sensor.outside_temp_low
+    - sensor.outside_precipitation
+    - sensor.outside_humidity
+    - sensor.outside_cloud_coverage
+    - sensor.outside_visibility
+    - sensor.outside_wind_speed
+    - sun.sun
+    
+lounge_tv:
+  name: Lounge TV
+  entities:
+    - remote.lounge
+    - input_number.lounge_volume
+    - input_select.lounge_harmony_activity
+    
+office_tv:
+  name: Office TV
+  entities:
+    - remote.office
+    - input_select.office_harmony_activity
+
+house_status:
+  name: House Status
+  entities:
+    - input_select.house_state
+    - input_select.who_cooks
+    - sensor.time_of_day
+    - device_tracker.chris_phone
+    - sensor.chris_to_home
+    - device_tracker.victoria_phone
+    - sensor.victoria_to_work
+    - sensor.victoria_to_home
+    - input_boolean.guests
+    - group.devices_guests
+
+office_sensor:
+  name: Office Sensor
+  entities:
+    - sensor.office_multisensor_temperature
+    - sensor.office_multisensor_relative_humidity
+    - sensor.office_multisensor_luminance
+    - sensor.office_multisensor_ultraviolet
+    - binary_sensor.office_multisensor_sensor
+    - sensor.office_multisensor_burglar
+
+lounge_sensor:
+  name: Lounge Sensor
+  entities:
+    - sensor.lounge_multisensor_temperature
+    - sensor.lounge_multisensor_relative_humidity
+    - sensor.lounge_multisensor_luminance
+    - sensor.lounge_multisensor_ultraviolet
+    - binary_sensor.lounge_multisensor_sensor
+    - sensor.lounge_multisensor_burglar
+
+entrance_sensor:
+  name: Entrance Sensor
+  entities:
+    - sensor.entrance_motion_sensor
+    - sensor.entrance_sensor_temp
+    - sensor.entrance_sensor_lux
+
+kitchen_sensor:
+  name: Kitchen Sensor
+  entities:
+    - sensor.kitchen_motion_sensor
+    - sensor.kitchen_sensor_temp
+    - sensor.kitchen_sensor_lux
+
+landing_sensor:
+  name: Landing Sensor
+  entities:
+    - sensor.landing_motion_sensor
+    - sensor.landing_sensor_temp
+    - sensor.landing_sensor_lux
+
+top_landing_sensor:
+  name: Top Landing Sensor
+  entities:
+    - sensor.landing_motion_sensor_2
+    - sensor.landing_sensor_temp_2
+    - sensor.landing_sensor_lux_2
+
+lounge_lights:
+  name: Lights
+  entities:
+    - light.behind_sofa_left
+    - light.behind_sofa_right
+    - light.lounge_ceiling
+    - light.lounge_corner
+    - light.lounge_table
+
+bedroom_sonos:
+  name: Bedroom Music
+  entities:
+    - media_player.bedroom
+    - input_number.bedroom_volume
+    
+internet:
+  name: Internet
+  entities:
+    - sensor.speedtest_download
+    - sensor.speedtest_upload
+    - sensor.speedtest_ping
+    - sensor.external_ip
+    
+infrastructure:
+  name: Infrastructure
+  entities:
+    - sensor.uptime
+    - sensor.since_last_boot_templated
+    - sensor.disk_used_
+    - sensor.database_size
+    - sensor.average_load_1m
+    - sensor.average_load_15m
+    - sensor.ram_used
+    - device_tracker.assistant
+    - device_tracker.cloud_key
+    - device_tracker.draytek130_modem__zen
+    - device_tracker.files
+    - device_tracker.file_server
+    - device_tracker.harmony_lounge
+    - device_tracker.harmony_office
+    - device_tracker.sonoszb
+    - device_tracker.lounge_sonos
+    - device_tracker.bedroom_sonos
+    - device_tracker.nest_protect_1
+    - device_tracker.nest_protect_2
+    - device_tracker.nest_protect_3
+    - device_tracker.philips_bridge
+    - device_tracker.sky_box
+    - device_tracker.sky_box_1
+    - device_tracker.sky_box_2
+    - device_tracker.sky_box_3
+    
+devices:
+  name: Devices
+  entities:
+    - device_tracker.lounge_tv
+    - device_tracker.office_tv
+    - device_tracker.bedroom_tv
+    - device_tracker.bedroom_tv_2
+    - device_tracker.xbox
+    - device_tracker.playstation_4
+    - device_tracker.office_printer
+    - device_tracker.nintendo_switch
+    - device_tracker.mac_mini_wifi
+    - device_tracker.mac_mini
+    - device_tracker.echo_kitchen
+    - device_tracker.echo_office
+    - device_tracker.google_home_office
+    - device_tracker.echo_dot_bedroom
+    - device_tracker.dishwasher
+    - device_tracker.apple_tv_lounge
+    - device_tracker.apple_tv_lounge_wifi
+    - device_tracker.sonoszp
+    - device_tracker.sonoszp_2
+    - device_tracker.sonoszp_3
+    - device_tracker.sonoszp_4
+
+devices_chris:
+  name: Chris' Devices
+  entities:
+    - device_tracker.chris_phone
+    - sensor.iphone_x_battery_level
+    - sensor.iphone_x_battery_state
+    - device_tracker.chris_macbook
+    - input_boolean.macbook_power
+    - device_tracker.chris_ipad_pro_12
+    - device_tracker.chris_ipad
+    - device_tracker.chris_watch
+    - device_tracker.christoleysipad
+    
+devices_victoria:
+  name: Victoria's Devices
+  entities:
+    - device_tracker.victoria_phone
+    - device_tracker.victoria_laptop
+    - device_tracker.victoria_kindle
+    
+devices_phones:
+  name: Our Phones
+  entities:
+    - device_tracker.chris_phone
+    - device_tracker.victoria_phone
+
+device_guests:
+  name: Guests
+  entities:
+    - device_tracker.lynnes_iphone
+    - device_tracker.grahams_iphone
+    - device_tracker.grahams_mbp
+    - device_tracker.katies_phone
+    - device_tracker.emmas_phone
+    - device_tracker.fionas_phone
+    - device_tracker.tims_phone
+    - device_tracker.one_of_vics_friends_phones
+        
+floorplan:
+  name: Floorplan
+  entities:
+    - binary_sensor.floorplan
+
+office_desk_power:
+  name: Desk Power
+  entities:
+    - switch.office_desk_switch
+    - sensor.office_desk_current
+    - sensor.office_desk_energy
+    - sensor.office_desk_power
+    - sensor.office_desk_previous_reading
+    - sensor.office_desk_voltage
+
+energy:
+  name: Energy
+#  entities:
+#    - sensor.energy_budget
+#    - sensor.energy_consumed
+#    - sensor.energy_cost
+#    - sensor.energy_cost_2
+#    - sensor.energy_usage
+
+online:
+  name: Online
+#  entities:
+#    - binary_sensor.entryway_camera_online
+#    - binary_sensor.entryway_camera_online_2
+#    - binary_sensor.entryway_nest_protect_online
+#    - binary_sensor.hallway_nest_protect_online
+#    - binary_sensor.living_room_camera_online
+#    - binary_sensor.living_room_thermostat_online
+#    - binary_sensor.upstairs_nest_protect_online
+
+batteries:
+  name: Batteries
+#  entities:
+#    - sensor.entryway_nest_protect_battery_health
+#    - sensor.hallway_nest_protect_battery_health
+#    - sensor.upstairs_nest_protect_battery_health
+
+alarm_panel:
+ name: Alarm
+ view: yes
+ icon: mdi:shield
+ entities:
+   - group.alarm
+   - group.floorplan
+
+alarm:
+  name: Alarm
+  entities:
+    - alarm_control_panel.ha_alarm
+
+temperatures:
+  name: Temperatures
+  entities:
+    - history_graph.temperatures
+    - sensor.lounge_temperature
+    - sensor.office_temperature
+    - sensor.landing_temperature
+    - sensor.entrance_temperature
+    - sensor.current_outside_temperature
+
+bins:
+  name: Bins
+  entities:
+    - sensor.black_bin_out
+    - calendar.black_bin
+    - sensor.recycling_bin_out
+    - calendar.recycling_bin
+
+guest_wifi:
+  name: Guest Wifi
+  control: hidden #(Optional): Set value to hidden. If hidden then the group switch will be hidden.
+  entities:
+    - sensor.guest_requesting_access
+    - script.approve_guest
+    - script.reject_guest
+  
+# Disabled to see all sensors while testing
+#  default_view:
+Home:
+  view: yes
+  entities:
+    - group.outside
+    - group.whos_home
+    - group.whos_cooking
+    
+lounge:
+  view: yes
+  name: Lounge
+  entities:
+    - group.outside
+    - climate.lounge
+    - group.whos_home
+    - group.lounge_tv
+    - group.whos_cooking
+    - group.lounge_lights
+
+bedroom:
+  name: Bedroom
+  view: yes
+  entities:
+    - group.bedroom_sensor
+
+monitoring:
+  name: Monitoring
+  view: yes
+  entities:
+    - group.internet
+    - group.online
+    - group.batteries
+    - group.energy

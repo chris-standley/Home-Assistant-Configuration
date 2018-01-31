@@ -1,0 +1,17 @@
+approve_guest:
+  alias: Approve
+  sequence:
+    - service: rest_command.authorise_guest
+    - service: persistent_notification.create
+      data_template:
+        message: "Guest access approved for {{ states('sensor.guest_requesting_access') }}"
+        title: 'Access Approved'
+
+reject_guest:
+  alias: Reject
+  sequence:
+    - service: rest_command.reject_guest
+    - service: persistent_notification.create
+      data_template:
+        message: "Guest access rejected for {{ states('sensor.guest_requesting_access') }}"
+        title: 'Access Rejected'

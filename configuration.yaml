@@ -1,0 +1,673 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret latitude
+  longitude: !secret longitude
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 34.29
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/London
+  customize: !include customize.yaml
+
+http:
+  # Uncomment this to add a password (recommended!)
+  api_password: !secret api_password
+  # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+  base_url: !secret base_url
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
+
+# Text to speech
+tts:
+  - platform: google
+
+mqtt:
+  broker: core-mosquitto
+#  certificate: auto
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  discovery: true # (Optional): If the MQTT discovery should be enabled or not. Defaults to False.
+  discovery_prefix: home # (Optional): The prefix for the discovery topic. Defaults to homeassistant.
+
+notify:
+  - name: chris
+    platform: group
+    services:
+      - service: ios_chris_phone
+      - service: html5
+  - name: victoria
+    platform: group
+    services:
+     # - service: No notifications to victoria yet
+  - name: all_mobiles
+    platform: group
+    services:
+      - service: ios_chris_phone
+  - name: all_home
+    platform: group
+    services:
+      - service: ios_chris_phone
+      - service: html5
+      # TVs/Push to echo devices
+  - name: all
+    platform: group
+    services:
+      - service: ios_chris_phone
+  - name: html5
+    platform: html5
+    gcm_api_key: !secret gcm_api_key
+    gcm_sender_id: !secret gcm_sender_id
+  - name: facebook
+    platform: facebook
+    page_access_token: !secret facebook_page_access_token
+
+google:
+  client_id: !secret google_client_id
+  client_secret: !secret google_client_secret
+  
+nest:
+  client_id: !secret nest_client_id
+  client_secret: !secret nest_client_secret
+
+remote:
+  - platform: harmony
+    name: Lounge
+    host: 10.0.10.50
+    activity: Watch TV
+    scan_interval: 15
+  - platform: harmony
+    name: Office
+    host: 10.0.10.51
+    activity: Watch TV
+    scan_interval: 15
+    
+media_player:
+  - platform: apple_tv
+    name: Lounge Apple TV
+    host: 10.0.10.34
+    login_id: !secret lounge_apple_tv_login_id
+    start_off: true
+  - platform: braviatv
+    name: Office TV
+    host: 10.0.0.125
+#  - platform: samsungtv
+#    host: 10.0.10.33
+#    name: Bedroom TV
+#    mac: f8:04:2e:b1:2d:6d
+  - platform: sonos
+    hosts:
+    - 10.0.0.70
+    - 10.0.0.72
+  - platform: cast
+    host: 10.0.10.120
+  - platform: spotify
+    client_id: !secret spotify_client_id
+    client_secret: !secret spotify_client_secret
+#    aliases:
+
+sensor:
+  - platform: uptime
+  - platform: darksky
+    name: Outside
+    api_key: !secret darksky_api_key # (Required): Your API key.
+    monitored_conditions: # array (Required): Conditions to display in the frontend.
+      - summary # A human-readable text summary of the current conditions.
+      - icon
+      - precip_type # The type of precipitation occurring.
+      - precip_intensity # The average expected intensity of precipitation occurring.
+      - precip_probability # A value between 0 and 1 which is representing the probability of precipitation.
+      - temperature # The current temperature.
+      - apparent_temperature # A numerical value representing the apparent (or “feels like”) temperature.
+      # - dew_point # The dew point.
+      - wind_speed # The wind speed.
+      # - wind_bearing # Where the wind is coming from in degrees, with true north at 0° and progressing clockwise.
+      - cloud_cover # The percentage of sky occluded by clouds.
+      - humidity # The relative humidity.
+      # - pressure # The sea-level air pressure in millibars.
+      - visibility # The average visibility.
+      # - ozone # The columnar density of total atmospheric ozone in Dobson.
+      # - minutely_summary # A human-readable text summary for the next hour.
+      - hourly_summary # A human-readable text summary for the next 24 hours.
+      # - daily_summary # A human-readable text summary for the next 7 days.
+      - temperature_max # Today’s expected high temperature.
+      - temperature_min # Today’s expected low temperature.
+      - apparent_temperature_max # Today’s expected apparent high temperature.
+      - apparent_temperature_min # Today’s expected apparent low temperature.
+      # - precip_intensity_max # Today’s expected maximum intensity of precipitation.
+    units: auto # (Optional): Specify the unit system. Default to si or us based on the temperature preference in Home Assistant. Other options are auto, us, si, ca, and uk2. auto will let Dark Sky decide the unit system based on location.
+    update_interval: '00:02:00' # (Optional): Minimum time interval between updates. Default is 2 minutes. 
+
+#  - platform: efergy
+#    app_token: !secret efergy_app_token
+#    utc_offset: 0
+#    monitored_variables:
+#      - type: instant_readings
+#      - type: budget
+#      - type: cost
+#        period: day
+#        currency: £
+#      - type: cost
+#        period: month
+#        currency: £
+#      - type: amount
+#        period: day
+  - platform: google_travel_time
+    name: Chris to Home
+    api_key: !secret google_travel_times_api_key
+    origin: device_tracker.chris_phone
+    destination: zone.home
+#  - platform: google_travel_time
+#    name: Victoria To Home
+#    api_key: !secret google_travel_times_api_key
+#    origin: device_tracker.victoria_phone
+#    destination: zone.home
+#  - platform: google_travel_time
+#    name: Victoria To Work
+#    api_key: !secret google_travel_times_api_key
+#    origin: device_tracker.victoria_phone
+#    destination: zone.work
+  - platform: google_travel_time
+    name: Victoria to Home
+    api_key: !secret google_travel_times_api_key
+    origin: zone.work
+    destination: zone.home
+  - platform: google_travel_time
+    name: Victoria To Work
+    api_key: !secret google_travel_times_api_key
+    origin: zone.home
+    destination: zone.work
+  - platform: rest
+    resource: http://ip.jsontest.com
+    name: External IP
+    value_template: '{{ value_json.ip }}'
+  - platform: rest
+    name: Guest Requesting Access
+    resource: http://10.0.0.133/portal/api/next_guest_request.php
+    json_attributes:
+      - mac
+    value_template: '{{ value_json.firstname }} {{ value_json.lastname }}'
+  - platform: command_line
+    name: database_size
+    command: "du -m /config/home-assistant_v2.db | cut -f1"
+    unit_of_measurement: 'GB'
+    value_template: '{{ ( float(value) / 1024 ) | round(2) }}'
+  - platform: hue
+  - platform: systemmonitor
+    resources:
+      - type: since_last_boot
+      - type: disk_use_percent
+        arg: /
+      - type: memory_use_percent
+      - type: load_1m
+      - type: load_15m
+  - platform: speedtest
+    monitored_conditions:
+      - ping
+      - download
+      - upload
+#  - platform: mqtt
+#    name: "Guest requesting access"
+#    state_topic: "home/network/guest/request"
+#    value_template: >
+#      {{ value_json.firstname }} {{ value_json.lastname }}
+#  - platform: mqtt
+#    name: "MAC requesting access"
+#    state_topic: "home/network/guest/request"
+#    value_template: >
+#      {{ value_json.mac }}
+  - platform: template
+    sensors:
+      lounge_harmony_activity:
+        value_template: >
+          {% if states.remote.lounge %}
+            {{ states.remote.lounge.attributes.current_activity }}
+          {% else %}
+            Initialising
+          {% endif %}
+        friendly_name: 'Lounge'  
+      office_harmony_activity:
+        value_template: >
+          {% if states.remote.office %}
+            {{ states.remote.office.attributes.current_activity }}
+          {% else %}
+            Initialising
+          {% endif %}
+        friendly_name: 'Office'        
+      outside_temp_current:
+        value_template: >
+          {{ states('sensor.outside_temperature') }}°C ({{ states('sensor.outside_apparent_temperature') }}°C)
+        friendly_name: 'Temperature'
+      outside_temp_high: 
+        value_template: >
+          {{ states('sensor.outside_daily_high_temperature') }}°C ({{ states('sensor.outside_daily_high_apparent_temperature') }}°C)
+        friendly_name: 'High'
+      outside_temp_low:
+        value_template: >
+          {{ states('sensor.outside_daily_low_temperature') }}°C ({{ states('sensor.outside_daily_low_apparent_temperature') }}°C)
+        friendly_name: 'Low'
+      outside_precipitation:
+        value_template: >
+          {% if states('sensor.outside_precip_intensity') != '0' %}
+            {{ states('sensor.outside_precip') }} @ {{ states('sensor.outside_precip_intensity') }}mm/h
+          {% else %}
+            None
+          {% endif %}
+        friendly_name: 'Precipitation'
+      time_of_day:
+        friendly_name: 'Time of Day'
+        value_template: >
+          {%- if now().hour >= 19 and now().hour < 21 -%}
+              Evening
+          {%- elif now().hour >= 21 and now().hour < 24 -%}
+              Nightfall
+          {%-  elif now().hour >= 0 and now().hour < 6 -%}
+            Night
+          {%-  elif now().hour >= 6 and now().hour < 7 -%}
+            Early
+          {%- else -%}
+            Day
+          {%- endif %}
+      outside_hourly_summary_line_1:
+        value_template: >
+          {{ (states('sensor.outside_hourly_summary') | wordwrap(45, true,"§")).split("§")[0] }}
+      outside_hourly_summary_line_2:
+        value_template: >
+          {{ (states('sensor.outside_hourly_summary') | wordwrap(45, true,"§")).split("§")[1] }}
+      outside_hourly_summary_line_3:
+        value_template: >
+          {{ (states('sensor.outside_hourly_summary') | wordwrap(45, true,"§")).split("§")[2] }}
+      entrance_sensor_temp:
+        value_template: '{{ states.sensor.entrance_motion_sensor.attributes.temperature }}'
+        friendly_name: 'Temperature'
+      entrance_sensor_lux:
+        value_template: '{{ states.sensor.entrance_motion_sensor.attributes.lux }}'
+        friendly_name: 'Luminance'
+      kitchen_sensor_temp:
+        value_template: '{{ states.sensor.kitchen_motion_sensor.attributes.temperature }}'
+        friendly_name: 'Temperature'
+      kitchen_sensor_lux:
+        value_template: '{{ states.sensor.kitchen_motion_sensor.attributes.lux }}'
+        friendly_name: 'Luminance'
+      landing_sensor_temp:
+        value_template: '{{ states.sensor.landing_motion_sensor.attributes.temperature }}'
+        friendly_name: 'Temperature'
+      landing_sensor_lux:
+        value_template: '{{ states.sensor.landing_motion_sensor.attributes.lux }}'
+        friendly_name: 'Luminance'
+      landing_sensor_temp_2:
+        value_template: '{{ states.sensor.landing_motion_sensor_2.attributes.temperature }}'
+        friendly_name: 'Temperature'
+      landing_sensor_lux_2:
+        value_template: '{{ states.sensor.landing_motion_sensor_2.attributes.lux }}'
+        friendly_name: 'Luminance'
+      lounge_temperature:
+        value_template: >
+          {{ states('sensor.lounge_multisensor_temperature') | round(2) }}
+        friendly_name: 'Lounge'
+      office_temperature:
+        value_template: >
+          {{ states('sensor.office_multisensor_temperature') | round(2) }}
+        friendly_name: 'Office'
+      landing_temperature:
+        value_template: '{{ states.sensor.landing_motion_sensor.attributes.temperature | round(2) }}'
+        friendly_name: 'Landing'
+      entrance_temperature:
+        value_template: '{{ states.sensor.entrance_motion_sensor.attributes.temperature | round(2) }}'
+        friendly_name: 'Entrance'
+      current_outside_temperature:
+        value_template: >
+          {{ states('sensor.outside_temperature') | round(2) }}
+        friendly_name: 'Outside'
+      black_bin_out:
+        value_template: '{{ (as_timestamp(states.calendar.black_bin.attributes.start_time) - (5.25*60*60)) | timestamp_custom("%Y-%m-%d %H:%M") }}' # Calendar entry starts at midnight on the day of the collection, I want to be reminded at 18:45, 5:15 hours earlier
+        friendly_name: 'Black Bin Out'
+        unit_of_measurement: 'time'
+      recycling_bin_out:
+        value_template: '{{ (as_timestamp(states.calendar.recycling_bin.attributes.start_time) - (5.25*60*60)) | timestamp_custom("%Y-%m-%d %H:%M") }}' # Calendar entry starts at midnight on the day of the collection, I want to be reminded at 18:45, 5:15 hours earlier
+        friendly_name: 'Recycling Bin Out'
+        unit_of_measurement: 'time'
+      clock_time:
+        value_template: '{{ (now().strftime("%s") | int | timestamp_custom("%H:%M")) }}'
+        unit_of_measurement: 'time'
+        friendly_name: 'Time'
+      clock_date:
+        value_template: '{{ (now().strftime("%s") | int | timestamp_custom("%A, %d %B")) }}'
+        unit_of_measurement: 'time'
+        friendly_name: 'Date'
+      chris_location:
+        value_template: >
+          {% if states('device_tracker.chris_phone') != 'not_home' -%}
+            {{ states('device_tracker.chris_phone') }}
+          {%- else -%}
+            {{ states('sensor.chris_to_home')}} minutes
+          {%- endif %}
+      victoria_location:
+        value_template: >
+          {% if states('device_tracker.victoria_phone') != 'not_home' -%}
+            {{ states('device_tracker.victoria_phone') }}
+          {%- else -%}
+            {{ states('sensor.victoria_to_home')}} minutes
+          {%- endif %}
+      since_last_boot_templated:
+        value_template: >-
+          {%- set slb = states.sensor.since_last_boot.state.split(' ') -%}
+          {%- set count = slb | length -%}
+          {%- set hms = slb[count - 1] -%}
+          {%- set hms_trimmed = hms.split('.')[0] -%}
+          {%- set hms_split = hms_trimmed.split(':') -%}
+          {%- set hours = hms_split[0] | int -%}
+          {%- set minutes = hms_split[1] | int -%}
+          {%- set seconds = hms_split[2] | int -%}
+
+          {%- if count == 3 -%}
+            {{ slb[0] ~ ' ' ~ slb[1] ~ ' ' }}
+          {%- endif -%}
+          {%- if hours > 0 -%}
+            {%- if hours == 1 -%}
+              1 hour
+            {%- else -%}
+              {{ hours }} hours
+            {%- endif -%}
+          {%- endif -%}
+          {%- if minutes > 0 -%}
+            {%- if hours > 0 -%}
+              {{ ', ' }}
+            {%- endif -%}
+            {%- if minutes == 1 -%}
+              1 minute
+            {%- else -%}
+              {{ minutes }} minutes
+            {%- endif -%}
+          {%- endif -%}
+          {%- if seconds > 0 -%}
+            {%- if hours > 0 or minutes > 0 -%}
+              {{ ', ' }}
+            {%- endif -%}
+            {%- if seconds == 1 -%}
+              1 second
+            {%- else -%}
+              {{ seconds }} seconds
+            {%- endif -%}
+          {%- endif -%}
+
+rest_command:
+  authorise_guest:
+    url: >
+      http://10.0.0.133/portal/api/approve_guest.php?mac={{ states.sensor.guest_requesting_access.attributes.mac }}
+    method: get # (Optional): HTTP method to use (get, post, put, or delete). Defaults to get.
+#    payload: # (Optional): A string/template to send with request.
+#    username: # (Optional): The username for HTTP authentication.
+#    password: # (Optional): The password for HTTP authentication.
+#    timeout: # (Optional): Timeout for requests. Defaults to 10 seconds.
+#    content_type: # (Optional): Content type for the request.
+  reject_guest:
+    url: >
+      http://10.0.0.133/portal/api/reject_guest.php?mac={{ states.sensor.guest_requesting_access.attributes.mac }}
+    method: get # (Optional): HTTP method to use (get, post, put, or delete). Defaults to get.
+#    payload: # (Optional): A string/template to send with request.
+#    username: # (Optional): The username for HTTP authentication.
+#    password: # (Optional): The password for HTTP authentication.
+#    timeout: # (Optional): Timeout for requests. Defaults to 10 seconds.
+#    content_type: # (Optional): Content type for the request.
+
+
+binary_sensor:
+  - platform: mqtt
+    state_topic: dummy/floorplan/sensor
+    name: Floorplan
+
+alarm_control_panel:
+  - platform: manual_mqtt
+    code: !secret alarm_code
+    state_topic: home/alarm
+    command_topic: home/alarm/set
+    pending_time: 30
+    delay_time: 20
+    trigger_time: 4
+    disarmed:
+      trigger_time: 0
+    armed_home:
+      pending_time: 0
+      delay_time: 0
+
+input_number:
+  lounge_volume:
+    icon: mdi:volume-high
+    name: Volume
+    initial: 30
+    min: 1
+    max: 100
+    step: 1
+  bedroom_volume:
+    icon: mdi:volume-high
+    name: Volume
+    initial: 30
+    min: 1
+    max: 100
+    step: 1
+
+input_select:
+  who_cooks:
+    name: Who cooks today
+    options:
+     - Chris
+     - Victoria
+    icon: mdi:panda
+  house_state:
+    name: House State
+    options:
+      - Home
+      - Sleep
+      - Entertaining
+      - Away
+    icon: mdi:house
+  lounge_harmony_activity:
+    name: Activity
+    options:
+     - PowerOff
+     - Watch TV
+     - Watch Apple TV
+     - Watch Netflix
+  office_harmony_activity:
+    name: Activity
+    options:
+     - PowerOff
+     - Watch TV
+     - Netflix
+     - Playstation
+     - Xbox
+     - Mac
+
+input_boolean:
+  guests:
+    name: Guests
+    icon: mdi:car
+  lounge_light_override:
+    name: Override automations
+  macbook_power:
+    name: MacBook
+
+input_text:
+  alarm_code:
+    name: Alarm Code
+    initial: ''
+
+device_tracker:
+  - platform: unifi
+    host: !secret unifi_host # (Optional): The hostname or IP address of your controller. Defaults to localhost.
+    port: !secret unifi_port # (Optional): The port of your controller’s web interface. Defaults to 8443.
+    username: !secret unifi_username # (Required: The username of an user with administrative privileges, usually admin.
+    password: !secret unifi_password # (Required): The password for your given admin account.
+    site_id: !secret unifi_site_id # (Optional): Allows you to specify a site_id for device tracking. Defaults to default. Found in the URL of the controller (i.e. https://CONTROLLER:PORT/manage/site/SITE_ID/dashboard).
+    verify_ssl: FALSE # (Optional): Controls if the SSL certificate running on your Unifi webserver must be trusted by a known Certificate Authority on the server running Home Assistant. Defaults to ‘True’ but can also be a value that points to your custom cert “path/to/custom_cert.pem”.
+
+history_graph:
+  graph_temperatures:
+    name: Temperatures
+    entities:
+      - sensor.lounge_temperature
+      - sensor.office_temperature
+      - sensor.landing_temperature
+      - sensor.entrance_temperature
+      - sensor.current_outside_temperature
+    hours_to_show: 120
+    refresh: 120
+
+#switch:
+#  - platform: command_line
+#    switches:
+#      macbook_power:
+#        friendly_name: MacBook
+#        command_on: ""
+#        command_off: ""
+# - platform: flux
+#  lights: # (Required) array: List of light entities.
+#    - light.bathroom_ceiling
+#    - light.bedroom_ceiling
+#    - light.behind_sofa_left
+#    - light.behind_sofa_right
+#    - light.ensuite_ceiling
+#    - light.guest_room_ceiling
+#    - light.kitchen_cooking_area
+#    - light.kitchen_storage_area
+#    - light.lounge_ceiling
+#    - light.lounge_corner
+#    - light.lounge_table
+#    - light.office_ceiling
+#    - light.office_desk
+#    - light.spare_room_ceiling
+#  name: Adjust light colour temperature for time of day # (Optional): The name to use when displaying this switch.
+#  start_time: '07:00' # (Optional): The start time. Default to sunrise.
+#  stop_time: '22:00' # (Optional): The stop time. Defaults to 22:00.
+#  start_colortemp: 4500 # (Optional): The color temperature at the start. Defaults to 4000.
+#  sunset_colortemp: 3000 # (Optional): The sun set color temperature. Defaults to 3000.
+#  stop_colortemp: 1500 # (Optional): The color temperature at the end. Defaults to 1900.
+#  # brightness: -using default- # (Optional): The brightness of the lights. Calculated with RGB_to_xy by default.
+#  disable_brightness_adjust: False # (Optional): If true, brightness will not be adjusted besides color temperature. Defaults to False.
+#  mode: mired # (Optional): Select how color temperature is passed to lights. Valid values are xy, mired and rgb. Defaults to xy.
+
+panel_custom:
+  - name: floorplan
+    sidebar_title: Floorplan
+    sidebar_icon: mdi:home
+    url_path: floorplan
+    config: !include floorplan.yaml
+    
+weblink:
+  entities:
+    - name: Home Assistant
+      url: https://home-assistant.io
+    - name: MacBook Status
+      url: https://github.com/robmarkcole/HASS-hammerspoon
+    - name: Floorplan Component
+      url: https://github.com/pkozul/ha-floorplan
+    - name: Hue Sensors
+      url: https://github.com/robmarkcole/Hue-sensors-HASS
+    - name: Unifi Controller
+      url: https://10.0.0.2:8443
+    - name: Unifi Cloud Key
+      url: https://10.0.0.2/login
+    - name: Files
+      url: https://10.0.0.11:1989
+    - name: HASS Podcast
+      url: https://hasspodcast.io/
+    - name: HA Twitter
+      url: https://twitter.com/home_assistant?lang=en
+    - name: Bruh Automation Github
+      url: https://github.com/bruhautomation
+    - name: CCOSTAN Blog
+      url: http://www.vmwareinfo.com/search/label/iot
+    - name: CCOSTAN Github
+      url: https://github.com/CCOSTAN/Home-AssistantConfig
+    
+zwave:
+  usb_path: /dev/ttyACM0
+
+frontend: # Enables the frontend
+  extra_html_url:
+    - /local/custom_ui/state-card-floorplan.html
+  themes:
+    darkblue:
+      primary-color: "#396FB6"
+      light-primary-color: "#77a0d4"
+      dark-primary-color: "#3539ce"
+      text-primary-color: "#ffffff"
+      primary-background-color: "#37464f"
+      sidebar-text_-_background: "#3c4348"
+      paper-card-background-color: "#263137"
+      paper-card-header-color: "var(--text-primary-color)"
+      secondary-background-color: "var(--primary-background-color)"
+      primary-text-color: "var(--text-primary-color)"
+      secondary-text-color: "var(--primary-color)"
+      paper-listbox-background-color: "var(--sidebar-text_-_background)"
+      paper-toggle-button-checked-ink-color: "var(--dark-primary-color)"
+      paper-toggle-button-checked-button-color: "var(--dark-primary-color)"
+      paper-toggle-button-checked-bar-color: "var(--dark-primary-color)"
+      paper-slider-knob-color: "var(--primary-color)"
+      paper-slider-knob-start-color: "var(--primary-color)"
+      paper-slider-pin-color: "var(--primary-color)"
+      paper-slider-active-color: "var(--primary-color)"
+      paper-slider-secondary-color: "var(--light-primary-color)"
+      paper-slider-container-color: "var(--sidebar-text_-_background)"
+      paper-progress-secondary-color: "var(--sidebar-text_-_background)"
+      paper-item-selected_-_background-color: "var(--primary-color)"
+      paper-item-icon_-_color: "var(--text-primary-color)"
+      paper-item-icon-color: "var(--text-primary-color)"
+      paper-item-icon-active-color: "var(--primary-color)"
+      paper-grey-50: "var(--sidebar-text_-_background)"
+      paper-grey-200: "var(--primary-background-color)"
+      label-badge-background-color: "var(--sidebar-text_-_background)"
+      label-badge-text-color: "var(--text-primary-color)"
+      label-badge-red: "var(--primary-color)"
+      label-badge-blue: "var(--light-primary-color)"
+      label-badge-green: "var(--dark-primary-color)"
+      label-badge-yellow: "var(--text-primary-color)"
+      label-badge-grey: "var(--paper-grey-500)"
+      table-row-background-color: "var(--paper-card-background-color)"
+      table-row-alternative-background-color: "var(--sidebar-text_-_background)"
+
+config: # Enables configuration UI
+updater: #Checks for updates
+conversation: # Allows you to issue voice commands from the frontend in enabled browsers
+history: # Enables support for tracking state changes over time
+recorder: # Component stores details in a database which are then handled by the history component
+  purge_interval: 1
+  purge_keep_days: 30
+logbook: # View all events in a logbook
+map: # Show the map panel
+sun: # Track the sun
+ios: # Enable the iOS (Apple not Cisco) component
+  push:
+    categories:
+      - name: guestaccess
+        identifier: 'guestaccess'
+        actions:
+          - identifier: 'GRANT_ACCESS' #(Required)  A unique identifier for this action. Must be uppercase and have no special characters or spaces. Only needs to be unique to the category, not unique globally.
+            title: 'Grant Access' # The text to display on the button. Keep it short.
+            activationMode: 'background' # (Optional): The mode in which to run the app when the action is performed. Setting this to foreground will make the app open after selecting. Default value is background.
+            authenticationRequired: no # (Optional): If a truthy value (true, True, yes, etc.) the user must unlock the device before the action is performed.
+            destructive: no # (Optional): When the value of this property is a truthy value, the system displays the corresponding button differently to indicate that the action is destructive (text color is red).
+            behavior: 'default' # (Optional): When textInput the system provides a way for the user to enter a text response to be included with the notification. The entered text will be sent back to Home Assistant. Default value is default.
+          - identifier: 'REJECT_ACCESS' #(Required)  A unique identifier for this action. Must be uppercase and have no special characters or spaces. Only needs to be unique to the category, not unique globally.
+            title: 'Reject Access' # The text to display on the button. Keep it short.
+            activationMode: 'background' # (Optional): The mode in which to run the app when the action is performed. Setting this to foreground will make the app open after selecting. Default value is background.
+            authenticationRequired: no # (Optional): If a truthy value (true, True, yes, etc.) the user must unlock the device before the action is performed.
+            destructive: yes # (Optional): When the value of this property is a truthy value, the system displays the corresponding button differently to indicate that the action is destructive (text color is red).
+            behavior: 'default' # (Optional): When textInput the system provides a way for the user to enter a text response to be included with the notification. The entered text will be sent back to Home Assistant. Default value is default.
+            
+hassio: # Enable the Hassio pannel as discovery is disabled
+hue:
+  bridges:
+    - host: 10.0.10.3
+      allow_unreachable: false
+      allow_in_emulated_hue: false
+      allow_hue_groups: true
+# discovery: # Discover some devices automatically
+
+zone: !include zones.yaml
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml

@@ -1,0 +1,43 @@
+### zones.yaml
+
+- zone:
+  name: Home
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  radius: 200
+  icon: mdi:home
+  beacon:
+    uuid: !secret beacon_uuid
+    major: 1
+    minor: 3
+
+- zone 2:
+  name: Work
+  latitude: !secret work_latitude
+  longitude: !secret work_longitude
+  icon: mdi:school
+
+- zone 3:
+  name: Lincoln
+  latitude: !secret lincoln_latitude
+  longitude: !secret lincoln_longitude
+  radius: 1000
+  icon: mdi:cart
+
+- zone 4:
+  name: Standleys
+  latitude: !secret standleys_latitude
+  longitude: !secret standleys_longitude
+  icon: mdi:home
+  
+- zone 5: 
+  name: Marshalls
+  latitude: !secret marshalls_latitude
+  longitude: !secret marshalls_longitude
+  icon: mdi:home
+
+- zone 6:
+  name: Jess'
+  latitude: !secret jess_latitude
+  longitude: !secret jess_longitude
+  icon: mdi:home

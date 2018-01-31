@@ -1,0 +1,268 @@
+### customize.yaml
+
+# Office Mulitsensor
+sensor.office_multisensor_temperature:
+  friendly_name: Office Temperature
+  unit_of_measurement: °C
+sensor.office_multisensor_relative_humidity:
+  friendly_name: Office Humidity
+  icon: mdi:water-percent
+sensor.office_multisensor_luminance:
+  friendly_name: Office Luminance
+  icon: mdi:weather-sunny
+  unit_of_measurement: lux
+binary_sensor.office_multisensor_sensor:
+  friendly_name: Office Motion Sensor
+  icon: mdi:run-fast
+zwave.office_multisensor:
+  friendly_name: Office MultiSensor
+
+# Lounge Multisensor
+sensor.lounge_multisensor_temperature:
+  friendly_name: Lounge Temperature
+  unit_of_measurement: °C
+sensor.lounge_multisensor_relative_humidity:
+  friendly_name: Lounge Humidity
+  icon: mdi:water-percent
+sensor.lounge_multisensor_luminance:
+  friendly_name: Lounge Luminance
+  unit_of_measurement: lux
+  icon: mdi:weather-sunny
+binary_sensor.lounge_multisensor_sensor:
+  friendly_name: Lounge Motion Sensor
+  icon: mdi:run-fast
+zwave.lounge_multisensor:
+  friendly_name: Lounge MultiSensor
+
+# Entrance Hue Sensor
+sensor.entrance_motion_sensor:
+  friendly_name: Entrance Motion Sensor
+sensor.entrance_sensor_temp:
+  friendly_name: Entrance Temperature
+  unit_of_measurement: °C
+  icon: mdi:thermometer
+sensor.entrance_sensor_lux:
+  friendly_name: Lounge Luminance
+  unit_of_measurement: lux
+  icon: mdi:weather-sunny
+  
+# Kitchen Hue Sensor
+sensor.kitchen_motion_sensor:
+  friendly_name: Kitchen Motion Sensor
+sensor.kitchen_sensor_temp:
+  friendly_name: Kitchen Temperature
+  icon: mdi:thermometer
+  unit_of_measurement: °C
+sensor.kitchen_sensor_lux:
+  friendly_name: Kitchen Luminance
+  unit_of_measurement: lux
+  icon: mdi:weather-sunny
+  
+# Landing Hue Sensor
+sensor.landing_motion_sensor:
+  friendly_name: Landing Motion Sensor
+sensor.landing_sensor_temp:
+  friendly_name: Landing Temperature
+  unit_of_measurement: °C
+  icon: mdi:thermometer
+sensor.landing_sensor_lux:
+  friendly_name: Landing Luminance
+  unit_of_measurement: lux
+  icon: mdi:weather-sunny
+
+# Top Landing Hue Sensor
+sensor.landing_motion_sensor_2:
+  friendly_name: Top Landing Motion Sensor
+sensor.landing_sensor_temp_2:
+  friendly_name: Top Landing Temperature
+  unit_of_measurement: °C
+  icon: mdi:thermometer
+sensor.landing_sensor_lux_2:
+  friendly_name: Top Landing Luminance
+  unit_of_measurement: lux
+  icon: mdi:weather-sunny
+
+# Weather
+sensor.outside_cloud_coverage:
+  friendly_name: Cloud cover
+sensor.outside_hourly_summary:
+  friendly_name: Forecast
+sensor.outside_humidity:
+  friendly_name: Humidity
+sensor.outside_summary:
+  friendly_name: Currently
+sensor.outside_visibility:
+  friendly_name: Visibility
+sensor.outside_wind_speed:
+  friendly_name: Wind Speed
+sun.sun:
+  friendly_name: Sun State
+sensor.outside_temp_current:
+  icon: mdi:thermometer
+sensor.outside_temp_high:
+  icon: mdi:thermometer
+  unit_of_measurement: °C
+sensor.outside_temp_low:
+  icon: mdi:thermometer
+  unit_of_measurement: °C
+sensor.outside_precipitation:
+  icon: mdi:weather-pouring
+### Hidden entities ###
+sensor.office_multisensor_ultraviolet:
+  friendly_name: Ultraviolet
+  icon: mdi:sunglasses
+  hidden: true
+sensor.office_multisensor_alarm_level:
+  hidden: true
+sensor.office_multisensor_alarm_type:
+  hidden: true
+sensor.office_multisensor_sourcenodeid:
+  hidden: true
+sensor.office_multisensor_burglar:
+  friendly_name: Sensor Value
+  hidden: true
+  
+sensor.lounge_multisensor_ultraviolet:
+  friendly_name: Ultraviolet
+  icon: mdi:sunglasses
+  hidden: true
+sensor.lounge_multisensor_alarm_level:
+  hidden: true
+sensor.lounge_multisensor_alarm_type:
+  hidden: true
+sensor.lounge_multisensor_sourcenodeid:
+  hidden: true
+sensor.lounge_multisensor_burglar:
+  friendly_name: Sensor Value
+  hidden: true
+
+binary_sensor.floorplan:
+  custom_ui_state_card: state-card-floorplan
+  config: !include floorplan.yaml  
+
+sensor.lounge_temperature:
+#  hidden: true
+  unit_of_measurement: °C
+sensor.office_temperature:
+#  hidden: true
+  unit_of_measurement: °C
+sensor.landing_temperature:
+#  hidden: true
+  unit_of_measurement: °C
+sensor.entrance_temperature:
+#  hidden: true
+  unit_of_measurement: °C
+sensor.current_outside_temperature:
+#  hidden: true
+  unit_of_measurement: °C
+sensor.outside_apparent_temperature:
+  hidden: true
+  unit_of_measurement: °C
+light.hgrp0000008190:
+  hidden: true
+light.hgrp0000016382:
+  hidden: true
+light.hgrp0000262142:
+  hidden: true
+light.hgrp0000786706:
+  hidden: true
+light.hgrp0000786754:
+  hidden: true
+light.hgrp0004980994:
+  hidden: true
+light.hgrp0016777214:
+  hidden: true
+light.hgrp0033554430:
+  hidden: true
+light.hgrp0134004722:
+  hidden: true
+light.hgrp0134217726:
+  hidden: true
+light.hue_camera:
+  hidden: true
+light.hue_camera_2:
+  hidden: true
+binary_sensor.entryway_camera_motion_detected:
+  hidden: true
+binary_sensor.entryway_camera_person_detected:
+  hidden: true
+binary_sensor.entryway_camera_sound_detected:
+  hidden: true
+binary_sensor.entryway_camera__entrance_from_garden_activity:
+  hidden: true
+binary_sensor.entryway_camera__entrance_from_hall_activity:
+  hidden: true
+binary_sensor.entryway_camera_motion_detected_2:
+  hidden: true
+binary_sensor.entryway_camera_person_detected_2:
+  hidden: true
+binary_sensor.entryway_camera_sound_detected_2:
+  hidden: true
+binary_sensor.living_room_thermostat_fan:
+  hidden: true
+binary_sensor.living_room_thermostat_has_leaf:
+  hidden: true
+binary_sensor.living_room_thermostat_is_locked:
+  hidden: true
+binary_sensor.living_room_thermostat_is_using_emergency_heat:
+  hidden: true
+sensor.entryway_nest_protect_co_status:
+  hidden: true
+sensor.entryway_nest_protect_smoke_status:
+  hidden: true
+sensor.living_room_thermostat_humidity:
+  hidden: true
+sensor.living_room_thermostat_hvac_state:
+  hidden: true
+sensor.living_room_thermostat_operation_mode:
+  hidden: true
+sensor.living_room_thermostat_target:
+  hidden: true
+sensor.living_room_thermostat_temperature:
+  hidden: true
+sensor.hallway_nest_protect_co_status:
+  hidden: true
+sensor.hallway_nest_protect_smoke_status:
+  hidden: true
+sensor.upstairs_nest_protect_co_status:
+  hidden: true
+sensor.upstairs_nest_protect_smoke_status:
+  hidden: true
+sensor.lounge_harmony_activity:
+  hidden: true
+sensor.office_harmony_activity:
+  hidden: true
+sensor.outside_precip:
+  hidden: true
+sensor.outside_precip_intensity:
+  hidden: true
+sensor.outside_precip_probability:
+  hidden: true
+sensor.outside_temperature:
+  hidden: true
+sensor.outside_daily_high_apparent_temperature:
+  hidden: true
+sensor.outside_daily_high_temperature:
+  hidden: true
+sensor.outside_daily_low_apparent_temperature:
+  hidden: true
+sensor.outside_daily_low_temperature:
+  hidden: true
+sensor.outside_hourly_summary_line_1:
+  hidden: true
+sensor.outside_hourly_summary_line_2:
+  hidden: true
+sensor.outside_hourly_summary_line_3:
+  hidden: true
+sensor.outside_icon:
+  hidden: true
+sensor.since_last_boot:
+  hidden: true
+sensor.chris_location:
+  hidden: true
+sensor.victoria_location:
+  hidden: true
+media_player._living_room_ue40f7000:
+  hidden: true
+group.all_automations:
+  hidden: true
